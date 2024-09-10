@@ -16,7 +16,7 @@ minimal: false             # use a dark header
 # Menu
 
 navigation:                # accepts {file, title, url, icon, sidebaricon}
-  - {file: "index.html", title: "Home change", icon: home}
+  - {file: "index.md", title: "Home change", icon: home}
   - {file: "README.md", title: "About me", icon: adress-card}
   - {file: "RuoHanCV.pdf", title: "CV", icon: CV}
   - {title: "About me", url: "https://www.ndcn.ox.ac.uk/team/ruohan-liu"}
