@@ -1,6 +1,6 @@
 title: "RuoHan Yangyang Liu Luo"
 author: "RuoHan Yangyang Liu Luo"
-description: "Oxford University"
+description: "@Oxford University"
 permalink: /:title/
 lang: "en"
 excerpt_separator: "\n\n\n"
@@ -16,8 +16,9 @@ minimal: false             # use a dark header
 # Menu
 
 navigation:                # accepts {file, title, url, icon, sidebaricon}
-  - {file: "index.html"}
-  - {file: "README.md"}
+  - {file: "index.html", title: Home change, icon: home}
+  - {file: "README.md", title: About me, icon: adress-card}
+  - {file: "RuoHan CV", title: CV, icon: CV}
 
 external:                  # shows a footer with social links - for available icons see fontawesome.com/icons
   - {title: Mail, icon: envelope, url: "mailto:spet5872@ox.ac.uk"}
