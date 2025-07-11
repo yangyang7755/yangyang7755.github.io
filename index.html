@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuoHan Yangyang Liu Luo - My Brain</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">I am RuoHan Yangyang Liu Luo</h1>
+            <p class="hero-subtitle">Scroll down to explore</p>
+        </div>
+    </section>
+
+    <!-- Neurons Firing Transition Section -->
+    <section class="neurons-section">
+        <div class="neurons-bg">
+            <div class="neurons-overlay-text" id="neuronsOverlayText">Welcome to my Brain</div>
+        </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section class="temporal-info-section" id="temporal-info">
+        <div class="temporal-info-content">
+            <h2>About Me</h2>
+            <p>Master from the Seymour lab, University of Oxford on Clinical neurosciences, St Peter's college 2023-2025. Former Bachelors with Honors from Biomedical science at UCL 2020-2023.</p>
+        </div>
+    </section>
+
+    <!-- Interactive Brain Section -->
+    <section class="interactive-section">
+        <div class="container">
+            <div class="interactive-instructions">Hover your mouse over different regions of the brain to explore</div>
+            <div class="brain-scale-wrapper" id="brainScaleWrapper">
+                <div class="brain-image-container">
+                    <img src="brain_image.jpg" alt="Brain" class="brain-image" id="brainImage">
+                    
+                    <!-- Frontal lobe region triggers scroll -->
+                    <div class="brain-region" id="prefrontal" data-region="prefrontal">
+                        <div class="region-tooltip">Frontal Lobe</div>
+                    </div>
+                    <!-- Temporal lobe region triggers scroll -->
+                    <div class="brain-region" id="temporal" data-region="temporal">
+                        <div class="region-tooltip">Temporal Lobe</div>
+                    </div>
+                    <!-- Occipital lobe region triggers scroll -->
+                    <div class="brain-region" id="occipital" data-region="occipital">
+                        <div class="region-tooltip">Occipital Lobe</div>
+                    </div>
+                    <!-- Other regions as links -->
+                    <a href="https://example.com/parietal" class="brain-region" id="parietal" data-region="parietal" target="_blank">
+                        <div class="region-tooltip">Parietal Lobe</div>
+                    </a>
+                    <!-- Remove cerebellum and hippocampus for now as per last CSS -->
+                </div>
+            </div>
+
+            <div class="content-panel" id="contentPanel">
+                <div class="content-header">
+                    <h2 id="contentTitle">Select a brain region to explore</h2>
+                    <button class="close-btn" id="closeBtn">&times;</button>
+                </div>
+                <div class="content-body" id="contentBody">
+                    <p>Click on any colored region of the brain to learn more about that aspect of my personality and interests.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="social-footer">
+            <div class="social-links">
+                <h3>Connect With Me</h3>
+                <div class="social-icons">
+                    <a href="https://www.linkedin.com/in/ruohan-yangyang-liu-luo-b6116a117/" class="social-link" title="LinkedIn" target="_blank">
+                        <img src="linkedin.png" alt="LinkedIn" class="social-icon-img" />
+                    </a>
+                    <a href="mailto:yangyang.ruohan.liu@gmail.com" class="social-link" title="Email">
+                        <img src="email.png" alt="Email" class="social-icon-img" />
+                    </a>
+                    <a href="https://www.instagram.com/yangyang7755/?hl=en" class="social-link" title="Instagram" target="_blank">
+                        <img src="instagram.png" alt="Instagram" class="social-icon-img" />
+                    </a>
+                    <a href="https://github.com/yangyang7755" class="social-link" title="GitHub" target="_blank">
+                        <img src="github.png" alt="GitHub" class="social-icon-img" />
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </section>
+
+    <!-- Digital Garden - Computational Neuroscience Section -->
+    <section class="frontal-info-section" id="frontalInfoSection">
+        <div class="digital-garden-container">
+            <div class="garden-header">
+                <h2 class="garden-title">My Digital Garden</h2>
+                <p class="garden-subtitle">My research interests lie at the intersection of explainable artificial intelligence and cognitive neuroscience, with the aim of decoding both artificial and biological minds. I’m especially fascinated by the challenge of peering inside the black box of large-scale neural networks, not just analyzing their input-output behavior, but understanding the internal representational logic they develop over time.<br>This is, is probably one of the hardest if not impossible questions of this era, but that doesn’t make it less interesting. What does it mean when a neural network “understands” a concept — and how does that process compare to cognition in the human brain? </p>
+            </div>
+            
+            <div class="garden-content">
+                <!-- Past Projects -->
+                <div class="garden-section">
+                    <h3 class="section-title">Past Projects</h3>
+                    <div class="section-content">
+                        <div class="project-item">
+                            <span class="project-name">
+                                <a href="Representations_dissertation.pdf" target="_blank" class="project-link">Representations, consciousness and memory in goal directed behavior</a>
+                            </span>
+                            <span class="project-year">2023</span>
+                        </div>
+                        <div class="project-item">
+                            <span class="project-name">
+                                <a href="https://www.overleaf.com/project/6810d91127a4262e77ebd4ca" target="_blank" class="project-link">Pain beyond aversiveness: Exploring intrinsic reward as a motivation factor in physically demanding tasks</a>
+                            </span>
+                            <span class="project-year">Ongoing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Everyday reflections -->
+                <div class="garden-section">
+                    <h3 class="section-title">Everyday reflections</h3>
+                    <p class="reflection-intro">I am innately positive person about the future, and learning new things keeps me sane. However, the world is pleted with an abundance of 'knowledge' rather than the lack of it 'knowledge' and sometimes it becomes overwhelming to even open a book or my laptop, so I take a step back from time to time and reflect about previous things I have learnt. Its not often easy, but it is always refreshing.</p>
+                </div>
+
+                <!-- Posters -->
+                <div class="garden-section">
+                    <h3 class="section-title">Posters</h3>
+                    <div class="section-content">
+                        <div class="poster-item">
+                            <span class="poster-title">
+                                <a href="UCL_gradproject.pptx" target="_blank" class="poster-link">"Representations, consciousness and memory in goal directed behavior"</a>
+                            </span>
+                            <span class="poster-conference">UCL Neuroscience 2023</span>
+                        </div>
+                        <div class="poster-item">
+                            <span class="poster-title">"Advanced BCI Systems for Clinical Applications"</span>
+                            <span class="poster-conference">Neuroscience 2024</span>
+                        </div>
+                        <div class="poster-item">
+                            <span class="poster-title">"Computational Approaches to Neural Plasticity"</span>
+                            <span class="poster-conference">Computational Neuroscience 2023</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="garden-footer">
+                <p class="garden-note">This digital garden grows with my research journey. New insights and discoveries will be added as they emerge.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photography Section - Occipital Lobe -->
+    <section class="photography-section" id="occipital-info">
+        <div class="photography-container">
+            <div class="photography-header">
+                <h2 class="photography-title">Visual Arts & Photography</h2>
+                <p class="photography-subtitle">Through the lens of the occipital lobe</p>
+            </div>
+            
+            <div class="photography-content">
+                <div class="photography-intro">
+                    <p class="intro-text">The occipital lobe processes visual information, transforming light into meaning. Here's where my creative vision and love for photography reside - capturing moments that tell stories beyond words.</p>
+                </div>
+                
+                <div class="photography-gallery-link">
+                    <a href="https://yangyang7755.my.canva.site/" target="_blank" class="gallery-link">
+                        <span class="link-text">View Full Photography Portfolio</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html> 
