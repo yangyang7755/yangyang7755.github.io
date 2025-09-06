@@ -215,6 +215,49 @@ if (occipitalRegion && photographySection) {
   });
 }
 
+// Parietal lobe click scroll (ensure this is present and correct)
+const parietalRegion = document.getElementById('parietal');
+const simulationSection = document.getElementById('parietal-info');
+if (parietalRegion && simulationSection) {
+  parietalRegion.addEventListener('click', () => {
+    simulationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+// Simulation logic for cognition output
+const visionSlider = document.getElementById('vision-slider');
+const hearingSlider = document.getElementById('hearing-slider');
+const touchSlider = document.getElementById('touch-slider');
+const proprioceptionSlider = document.getElementById('proprioception-slider');
+const cognitionText = document.getElementById('cognition-text');
+
+function updateCognitionOutput() {
+  const vision = parseInt(visionSlider.value, 10);
+  const hearing = parseInt(hearingSlider.value, 10);
+  const touch = parseInt(touchSlider.value, 10);
+  const proprio = parseInt(proprioceptionSlider.value, 10);
+  const senses = [vision, hearing, touch, proprio];
+  const avg = senses.reduce((a, b) => a + b, 0) / senses.length;
+
+  if (senses.every(val => val > 85)) {
+    cognitionText.textContent = "All senses are fully integrated. Cognition is optimal and perception is vivid.";
+  } else if (avg > 65) {
+    cognitionText.textContent = "Most senses are strong. Cognition is good, but some perceptual details may be missed.";
+  } else if (avg > 35) {
+    cognitionText.textContent = "Several senses are dampened. Cognition is effortful and perception is patchy.";
+  } else if (avg > 10) {
+    cognitionText.textContent = "Most senses are suppressed. Cognition is fragmented and perception is faint.";
+  } else {
+    cognitionText.textContent = "Sensory input is nearly absent. Cognition is minimal and the mind is adrift.";
+  }
+}
+
+if (visionSlider && hearingSlider && touchSlider && proprioceptionSlider) {
+  [visionSlider, hearingSlider, touchSlider, proprioceptionSlider].forEach(slider => {
+    slider.addEventListener('input', updateCognitionOutput);
+  });
+}
+
 // Animate About Me text bubble scaling on scroll
 const aboutContent = document.querySelector('.temporal-info-content');
 if (aboutSection && aboutContent) {
@@ -430,3 +473,341 @@ window.addEventListener('scroll', () => {
         brainScaleWrapper.style.transform = `scale(${scale})`;
     }
 }); 
+
+// --- Neuron Matrix Simulation ---
+const canvas = document.getElementById('neuron-canvas');
+const ctx = canvas ? canvas.getContext('2d') : null;
+
+const smellSlider = document.getElementById('smell-slider');
+
+const SENSES = [
+  { key: 'vision', color: '#4a90e2', slider: visionSlider },
+  { key: 'hearing', color: '#50e3c2', slider: hearingSlider },
+  { key: 'touch', color: '#f5a623', slider: touchSlider },
+  { key: 'proprio', color: '#b97aff', slider: proprioceptionSlider },
+  { key: 'smell', color: '#ff6fae', slider: smellSlider }
+];
+
+const BALL_RADIUS = 10;
+const MAX_BALLS_PER_SENSE = 10; // at slider 100
+const WIDTH = 600;
+const HEIGHT = 260;
+let balls = [];
+
+function addOrRemoveBalls() {
+  // For each sense, adjust the number of balls to match the slider
+  let newBalls = [];
+  SENSES.forEach((sense, i) => {
+    if (!sense.slider) return;
+    const count = Math.round((sense.slider.value / 100) * MAX_BALLS_PER_SENSE);
+    // Get existing balls for this sense
+    let existing = balls.filter(b => b.sense === sense.key);
+    // Add or remove balls as needed
+    if (existing.length < count) {
+      // Add new balls
+      for (let j = 0; j < count - existing.length; j++) {
+        newBalls.push({
+          x: Math.random() * (WIDTH - 2 * BALL_RADIUS) + BALL_RADIUS,
+          y: Math.random() * (HEIGHT - 2 * BALL_RADIUS) + BALL_RADIUS,
+          vx: (Math.random() - 0.5) * 2.5,
+          vy: (Math.random() - 0.5) * 2.5,
+          color: sense.color,
+          mass: 1,
+          sense: sense.key
+        });
+      }
+      newBalls = newBalls.concat(existing);
+    } else {
+      // Remove excess balls
+      newBalls = newBalls.concat(existing.slice(0, count));
+    }
+  });
+  balls = newBalls;
+}
+
+function drawBalls() {
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
+  balls.forEach(ball => {
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, 2 * Math.PI);
+    ctx.fillStyle = ball.color;
+    ctx.globalAlpha = 0.85;
+    ctx.shadowColor = ball.color;
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+  });
+}
+
+function resolveCollision(b1, b2) {
+  // 2D elastic collision for equal-mass balls
+  const dx = b2.x - b1.x;
+  const dy = b2.y - b1.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  if (dist === 0) return;
+  // Normal vector
+  const nx = dx / dist;
+  const ny = dy / dist;
+  // Tangent vector
+  const tx = -ny;
+  const ty = nx;
+  // Dot product tangent
+  const dpTan1 = b1.vx * tx + b1.vy * ty;
+  const dpTan2 = b2.vx * tx + b2.vy * ty;
+  // Dot product normal
+  const dpNorm1 = b1.vx * nx + b1.vy * ny;
+  const dpNorm2 = b2.vx * nx + b2.vy * ny;
+  // Swap normal velocities
+  const m1 = dpNorm2;
+  const m2 = dpNorm1;
+  b1.vx = tx * dpTan1 + nx * m1;
+  b1.vy = ty * dpTan1 + ny * m1;
+  b2.vx = tx * dpTan2 + nx * m2;
+  b2.vy = ty * dpTan2 + ny * m2;
+  // Separate balls
+  const overlap = 2 * BALL_RADIUS - dist;
+  if (overlap > 0) {
+    const sep = overlap / 2;
+    b1.x -= nx * sep;
+    b1.y -= ny * sep;
+    b2.x += nx * sep;
+    b2.y += ny * sep;
+  }
+}
+
+function updateBalls() {
+  for (let i = 0; i < balls.length; i++) {
+    let b = balls[i];
+    b.x += b.vx;
+    b.y += b.vy;
+    // Wall collision
+    if (b.x < BALL_RADIUS) { b.x = BALL_RADIUS; b.vx *= -1; }
+    if (b.x > WIDTH - BALL_RADIUS) { b.x = WIDTH - BALL_RADIUS; b.vx *= -1; }
+    if (b.y < BALL_RADIUS) { b.y = BALL_RADIUS; b.vy *= -1; }
+    if (b.y > HEIGHT - BALL_RADIUS) { b.y = HEIGHT - BALL_RADIUS; b.vy *= -1; }
+    // Ball-ball collision
+    for (let j = i + 1; j < balls.length; j++) {
+      let b2 = balls[j];
+      let dx = b2.x - b.x;
+      let dy = b2.y - b.y;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 2 * BALL_RADIUS) {
+        resolveCollision(b, b2);
+      }
+    }
+  }
+}
+
+function animateBalls() {
+  if (!ctx) return;
+  addOrRemoveBalls();
+  function loop() {
+    addOrRemoveBalls();
+    updateBalls();
+    drawBalls();
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+if (canvas && ctx) {
+  animateBalls();
+  // Update balls when sliders change
+  SENSES.forEach(sense => {
+    if (sense.slider) sense.slider.addEventListener('input', addOrRemoveBalls);
+  });
+} 
+
+// --- Neuron Network Simulation (Hodgkin-Huxley Inspired) ---
+const rasterCanvas = document.getElementById('raster-canvas');
+const axonCanvas = document.getElementById('axon-canvas');
+const neuronCountSlider = document.getElementById('neuron-count-slider');
+const neuronCountLabel = document.getElementById('neuron-count-label');
+
+function setCanvasSize() {
+  // Set canvas size to match viewport width
+  const width = window.innerWidth;
+  rasterCanvas.width = width;
+  rasterCanvas.height = Math.max(window.innerHeight * 0.38, 260);
+  axonCanvas.width = width;
+  axonCanvas.height = Math.max(window.innerHeight * 0.20, 120);
+}
+
+setCanvasSize();
+window.addEventListener('resize', setCanvasSize);
+
+function formatNeuronCount(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toLocaleString() + 'k';
+  return n.toString();
+}
+
+function drawRasterPlot(neuronCount) {
+  const ctx = rasterCanvas.getContext('2d');
+  ctx.clearRect(0, 0, rasterCanvas.width, rasterCanvas.height);
+  // Remove the label at the top
+  // ctx.fillStyle = '#fff';
+  // ctx.font = '18px Helvetica Neue, Helvetica, Arial, sans-serif';
+  // ctx.fillText('Raster Plot: Spikes from ' + formatNeuronCount(neuronCount) + ' neurons', 24, 32);
+  // Simulate random spikes for each neuron
+  const rows = neuronCount;
+  const cols = Math.floor(rasterCanvas.width / 2);
+  const rowHeight = (rasterCanvas.height - 40) / rows;
+  ctx.save();
+  ctx.globalAlpha = 0.7;
+  for (let i = 0; i < rows; i++) {
+    // Each neuron fires randomly 0-2 times in this frame
+    const spikes = Math.floor(Math.random() * 3);
+    for (let s = 0; s < spikes; s++) {
+      const x = Math.random() * (rasterCanvas.width - 40) + 20;
+      const y = 40 + i * rowHeight;
+      ctx.fillStyle = '#4a90e2';
+      ctx.fillRect(x, y, 2, Math.max(1, rowHeight * 0.7));
+    }
+  }
+  ctx.restore();
+}
+
+// --- EEG Trace Simulation: Population Activity ---
+const EEG_DURATION = 2.5; // seconds shown on screen
+const EEG_SAMPLING_RATE = 500; // Hz
+const EEG_POINTS = Math.floor(EEG_DURATION * EEG_SAMPLING_RATE);
+let eegBuffer = new Array(EEG_POINTS).fill(0);
+let eegBufferIdx = 0;
+
+function simulateEEG(neuronCount) {
+  // Each neuron has a small chance to fire per ms
+  const firingProb = 0.002; // ~2Hz per neuron
+  // Action potential shape: simple biphasic pulse (ms)
+  const apShape = [0, 0.5, 1, 0.5, 0, -0.3, -0.5, -0.3, 0];
+  const apLen = apShape.length;
+  // For each ms, sum all spikes
+  let eegSample = 0;
+  for (let n = 0; n < neuronCount; n++) {
+    if (Math.random() < firingProb) {
+      // Add action potential shape to EEG buffer
+      for (let k = 0; k < apLen; k++) {
+        let idx = (eegBufferIdx + k) % EEG_POINTS;
+        eegBuffer[idx] += apShape[k];
+      }
+    }
+  }
+  // The EEG sample is the sum at this time
+  eegSample = eegBuffer[eegBufferIdx];
+  // Decay old values for realism
+  eegBuffer[eegBufferIdx] *= 0.92;
+  eegBufferIdx = (eegBufferIdx + 1) % EEG_POINTS;
+  return eegSample;
+}
+
+function drawEEGTrace() {
+  const ctx = axonCanvas.getContext('2d');
+  ctx.clearRect(0, 0, axonCanvas.width, axonCanvas.height);
+  // Draw EEG baseline
+  ctx.strokeStyle = '#b8c5d6';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, axonCanvas.height/2);
+  ctx.lineTo(axonCanvas.width, axonCanvas.height/2);
+  ctx.stroke();
+
+  // --- Draw y-axis with μV labels ---
+  ctx.save();
+  ctx.strokeStyle = '#b8c5d6';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(40, 10);
+  ctx.lineTo(40, axonCanvas.height - 10);
+  ctx.stroke();
+  // Tick marks and labels for -100, 0, +100 μV
+  ctx.font = 'bold 1.1rem Helvetica Neue, Helvetica, Arial, sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.globalAlpha = 0.8;
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  // +100 μV
+  ctx.beginPath();
+  ctx.moveTo(35, 30);
+  ctx.lineTo(45, 30);
+  ctx.stroke();
+  ctx.fillText('+100 μV', 35, 30);
+  // 0 μV
+  ctx.beginPath();
+  ctx.moveTo(35, axonCanvas.height/2);
+  ctx.lineTo(45, axonCanvas.height/2);
+  ctx.stroke();
+  ctx.fillText('0', 35, axonCanvas.height/2);
+  // -100 μV
+  ctx.beginPath();
+  ctx.moveTo(35, axonCanvas.height-30);
+  ctx.lineTo(45, axonCanvas.height-30);
+  ctx.stroke();
+  ctx.fillText('-100 μV', 35, axonCanvas.height-30);
+  ctx.restore();
+
+  // --- Draw EEG trace ---
+  ctx.save();
+  ctx.strokeStyle = '#4a90e2';
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = '#4a90e2';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  let scaleX = (axonCanvas.width - 50) / EEG_POINTS; // leave space for y-axis
+  // Fixed μV scale: ±100 μV always maps to ±(canvas.height/2 - margin)
+  let maxMicrovolt = 100; // ±100 μV
+  let margin = 30;
+  let scaleY = (axonCanvas.height/2 - margin) / maxMicrovolt;
+  // Skip the first 5% of the EEG buffer to avoid initial noise on the left
+  let skip = Math.floor(EEG_POINTS * 0.05);
+  for (let i = 0; i < EEG_POINTS; i++) {
+    let idx = (eegBufferIdx + i) % EEG_POINTS;
+    let v = eegBuffer[idx]; // summed activity, in arbitrary units
+    // Assume 1 buffer unit = 1 μV (or adjust if needed for realism)
+    let microvolt = v;
+    let x = 50 + i * scaleX;
+    let y;
+    if (i < skip) {
+      y = axonCanvas.height/2; // Flat at baseline for first 5%
+    } else {
+      y = axonCanvas.height/2 - microvolt * scaleY;
+    }
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // Draw electrode label
+  ctx.save();
+  ctx.font = 'bold 1.1rem Helvetica Neue, Helvetica, Arial, sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.globalAlpha = 0.8;
+  ctx.fillText('EEG Electrode (Cz) - 1cm²', 70, 24);
+  ctx.restore();
+}
+
+function animateSimulation() {
+  const neuronCount = parseInt(neuronCountSlider.value, 10);
+  neuronCountLabel.textContent = formatNeuronCount(neuronCount);
+  drawRasterPlot(neuronCount);
+  // Simulate EEG
+  simulateEEG(neuronCount);
+  drawEEGTrace();
+  requestAnimationFrame(animateSimulation);
+}
+
+// Remove EEG buffer reset on neuron count change
+// neuronCountSlider.addEventListener('input', () => {
+//   neuronCountLabel.textContent = formatNeuronCount(parseInt(neuronCountSlider.value, 10));
+//   eegBuffer = new Array(EEG_POINTS).fill(0);
+//   eegBufferIdx = 0;
+// });
+
+// Instead, just update the label on slider input
+neuronCountSlider.addEventListener('input', () => {
+  neuronCountLabel.textContent = formatNeuronCount(parseInt(neuronCountSlider.value, 10));
+});
+
+// Start animation
+animateSimulation(); 
