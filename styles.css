@@ -1033,29 +1033,40 @@ body {
 
 /* About Me Section (Temporal Info) */
 
-/* About Me: toned-down link styling (bold grey, no underline) */
+/* Fix: robust centering & prevent clipping for About Me */
+.temporal-info-section {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 60px 20px 80px 20px; /* keep vertical breathing room */
+    overflow: visible !important;  /* allow any children to be visible */
+}
+
+.temporal-info-content {
+    width: 100%;
+    max-width: 1000px;            /* control readable line length */
+    box-sizing: border-box;       /* include padding in width calculations */
+    margin: 0 auto;               /* center horizontally */
+    padding: 36px 32px;           /* internal padding */
+    text-align: left;             /* readable paragraphs (change to center if you prefer) */
+    z-index: 50;                  /* ensure above background/overlays */
+    position: relative;           /* keep z-index effective */
+    overflow-wrap: break-word;    /* avoid unbroken long words/links */
+    word-break: normal;
+    white-space: normal;
+    background: rgba(30,30,30,0.98); /* keep your card look */
+}
+
+/* make links look as intended while preserving layout */
 .temporal-info-section a {
-    color: #8a8a8a;            /* muted grey */
-    font-weight: 700;         /* bold but readable */
-    text-decoration: none;    /* remove underline */
-    transition: color 0.18s ease, transform 0.12s ease;
-    cursor: pointer;
-}
-
-/* hover: subtle darken (keeps it non-cringey) */
-.temporal-info-section a:hover {
-    color: #e6e6e6;           /* slightly lighter on hover */
-    transform: translateY(-1px);
-}
-
-/* keyboard accessibility: visible focus ring for keyboard users */
-.temporal-info-section a:focus,
-.temporal-info-section a:focus-visible {
-    outline: 3px solid rgba(230,230,230,0.12);
-    outline-offset: 4px;
-    color: #ffffff;
+    color: #8a8a8a;
+    font-weight: 700;
     text-decoration: none;
-    box-shadow: 0 0 0 4px rgba(255,255,255,0.03) inset;
+}
+
+/* small responsive tweak */
+@media (max-width: 768px) {
+    .temporal-info-content { padding: 24px; max-width: 92%; }
 }
 
 /* Optional: show a tasteful underline only on hover (uncomment to use) */
